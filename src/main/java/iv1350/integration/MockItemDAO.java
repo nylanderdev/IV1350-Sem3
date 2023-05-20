@@ -6,7 +6,6 @@ import iv1350.dto.ItemDTO;
  * A mock example of a data access object for item. Used for testing
  */
 public class MockItemDAO implements ItemDAO {
-    public static final int INVALID_ID = -1;
     private static final ItemDTO YOGHURT =
             new ItemDTO(1, "Yoghurt",
                     "Greek yoghurt. Vanilla flavored",
@@ -32,15 +31,12 @@ public class MockItemDAO implements ItemDAO {
         if (itemId == DatabaseFailureException.DATABASE_FAILURE_TRIGGER_ID) {
             throw new DatabaseFailureException();
         }
-        if (itemId < 0) {
-            throw new ItemNotFoundException(itemId);
-        }
         if (itemId % 3 == 1) {
             return YOGHURT;
         } else if (itemId % 3 == 2) {
             return MUESLI;
         }
-        return null;
+        throw new ItemNotFoundException(itemId);
     }
 
     /**

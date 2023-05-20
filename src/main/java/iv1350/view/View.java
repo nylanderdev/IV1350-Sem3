@@ -18,6 +18,7 @@ public class View {
 
     /**
      * Starts the user interface and calls relevant system operations
+     *
      * @param controller A controller object exposing system operations
      */
     public void run(Controller controller) {
@@ -38,7 +39,14 @@ public class View {
 
     private void registerPayment() {
         final int OVERPAYMENT = 25;
-        lastSaleState = controller.registerPaymentForSale(lastSaleState.TOTAL_PRICE + OVERPAYMENT);
+        try {
+            lastSaleState = controller.registerPaymentForSale(lastSaleState.TOTAL_PRICE + OVERPAYMENT);
+        } catch (ItemNotFoundException e) {
+            System.out.println("Error: The payment could not be made, " +
+                    "because one or more items in the sale could not be found");
+            e.printStackTrace(System.err);
+            return;
+        }
         System.out.printf("Give the customer %d¤ in change\n\n", lastSaleState.PAYMENT.AMOUNT_OF_CHANGE);
     }
 
@@ -81,27 +89,24 @@ public class View {
     }
 
     private void handleItemNotFound(ItemNotFoundException e) {
-        System.out.printf("Error: %s", e.getMessage());
+        System.out.printf("Error: %s\n\n", e.getMessage());
         e.printStackTrace(System.err);
     }
 
     private void renderItemAdded(SaleDTO newSaleState) {
         Set<Map.Entry<ItemDTO, Integer>> itemsAdded = new HashSet<>(newSaleState.ITEMS_AND_QUANTITIES.entrySet());
         itemsAdded.removeAll(lastSaleState.ITEMS_AND_QUANTITIES.entrySet());
-        if (itemsAdded.isEmpty()) {
-            System.out.println(" ! Invalid item id ! \n");
-        } else {
-            for (Map.Entry<ItemDTO, Integer> itemAndQuantity : itemsAdded) {
-                ItemDTO itemAdded = itemAndQuantity.getKey();
-                int runningQuantity = itemAndQuantity.getValue();
-                System.out.printf("Added %s\n", itemAdded.NAME);
-                System.out.printf(" *total of %d units, at %d¤\n", runningQuantity, itemAdded.PRICE * runningQuantity);
-                System.out.printf(" - %s\n\n", itemAdded.DESCRIPTION);
-                System.out.printf("Total is %d¤\n\n", newSaleState.TOTAL_PRICE);
-            }
+        for (Map.Entry<ItemDTO, Integer> itemAndQuantity : itemsAdded) {
+            ItemDTO itemAdded = itemAndQuantity.getKey();
+            int runningQuantity = itemAndQuantity.getValue();
+            System.out.printf("Added %s\n", itemAdded.NAME);
+            System.out.printf(" *total of %d units, at %d¤\n", runningQuantity, itemAdded.PRICE * runningQuantity);
+            System.out.printf(" - %s\n\n", itemAdded.DESCRIPTION);
+            System.out.printf("Total is %d¤\n\n", newSaleState.TOTAL_PRICE);
         }
         this.lastSaleState = newSaleState;
     }
+
     private void renderReceipt(SaleDTO saleState) {
         System.out.print("--- Receipt ---\n");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
