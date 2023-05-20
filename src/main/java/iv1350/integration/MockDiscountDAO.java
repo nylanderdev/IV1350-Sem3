@@ -21,6 +21,9 @@ public class MockDiscountDAO implements DiscountDAO {
      */
     @Override
     public List<DiscountDTO> fetchDiscountsByCustomerId(int customerId) {
+        if (customerId == DatabaseFailureException.DATABASE_FAILURE_TRIGGER_ID) {
+            throw new DatabaseFailureException();
+        }
         List<DiscountDTO> discounts = new ArrayList<>();
         if (customerId % 3 == 0) {
             discounts.add(new DiscountDTO(25));

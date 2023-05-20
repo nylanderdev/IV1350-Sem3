@@ -1,6 +1,7 @@
 package iv1350.controller;
 
 import iv1350.dto.SaleDTO;
+import iv1350.integration.ItemNotFoundException;
 import iv1350.model.Sale;
 
 /**
@@ -23,7 +24,7 @@ public class Controller {
      * @param itemId An item to an id
      * @return The state of the current sale in the form of a SaleDTO
      */
-    public SaleDTO addItemToSale(int itemId) {
+    public SaleDTO addItemToSale(int itemId) throws ItemNotFoundException {
         currentSale.addItem(itemId);
         return currentSale.getSaleState();
     }
@@ -34,7 +35,7 @@ public class Controller {
      * @param quantity The number of items to add
      * @return The state of the current sale in the form of a SaleDTO
      */
-    public SaleDTO addItemToSaleWithQuantity(int itemId, int quantity) {
+    public SaleDTO addItemToSaleWithQuantity(int itemId, int quantity) throws ItemNotFoundException {
         currentSale.addItemWithQuantity(itemId, quantity);
         return currentSale.getSaleState();
     }
@@ -63,7 +64,7 @@ public class Controller {
      * @param cashPaid The amount paid
      * @return The final state of the sale in the form of a SaleDTO
      */
-    public SaleDTO registerPaymentForSale(int cashPaid) {
+    public SaleDTO registerPaymentForSale(int cashPaid) throws ItemNotFoundException {
         currentSale.registerPayment(cashPaid);
         return currentSale.getSaleState();
     }

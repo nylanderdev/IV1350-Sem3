@@ -4,6 +4,7 @@ import iv1350.controller.Controller;
 import iv1350.dto.DiscountDTO;
 import iv1350.dto.ItemDTO;
 import iv1350.dto.SaleDTO;
+import iv1350.integration.ItemNotFoundException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -58,13 +59,30 @@ public class View {
     }
 
     private void addItem(int id, int quantity) {
-        SaleDTO newSaleState = controller.addItemToSaleWithQuantity(id, quantity);
+        SaleDTO newSaleState;
+        try {
+            newSaleState = controller.addItemToSaleWithQuantity(id, quantity);
+        } catch (ItemNotFoundException e) {
+            handleItemNotFound(e);
+            return;
+        }
         renderItemAdded(newSaleState);
     }
 
     private void addItem(int id) {
-        SaleDTO newSaleState = controller.addItemToSale(id);
+        SaleDTO newSaleState;
+        try {
+            newSaleState = controller.addItemToSale(id);
+        } catch (ItemNotFoundException e) {
+            handleItemNotFound(e);
+            return;
+        }
         renderItemAdded(newSaleState);
+    }
+
+    private void handleItemNotFound(ItemNotFoundException e) {
+        System.out.printf("Error: %s", e.getMessage());
+        e.printStackTrace(System.err);
     }
 
     private void renderItemAdded(SaleDTO newSaleState) {
@@ -103,14 +121,5 @@ public class View {
         System.out.printf("You paid: %d¤\n", saleState.PAYMENT.AMOUNT_PAID);
         System.out.printf("Change back: %d¤\n", saleState.PAYMENT.AMOUNT_OF_CHANGE);
         System.out.print("---------------\n");
-    }
-
-    private static <T> T last(Collection<T> collection) {
-        T element = null;
-        Iterator<T> iterator = collection.iterator();
-        while (iterator.hasNext()) {
-            element = iterator.next();
-        }
-        return element;
     }
 }

@@ -4,10 +4,7 @@ import iv1350.dto.DiscountDTO;
 import iv1350.dto.ItemDTO;
 import iv1350.dto.PaymentDTO;
 import iv1350.dto.SaleDTO;
-import iv1350.integration.DAOCollection;
-import iv1350.integration.DiscountDAO;
-import iv1350.integration.ItemDAO;
-import iv1350.integration.SaleDAO;
+import iv1350.integration.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -64,7 +61,7 @@ public class Sale {
      * Adds a singular copy of the item of the corresponding itemId to the sale
      * @param itemId The id of an item to add
      */
-    public void addItem(int itemId) {
+    public void addItem(int itemId) throws ItemNotFoundException {
         addItemWithQuantity(itemId, 1);
     }
 
@@ -72,7 +69,7 @@ public class Sale {
      * Adds multiple copies of the item of the corresponding itemId to the sale
      * @param itemId The id of an item to add
      */
-    public void addItemWithQuantity(int itemId, int quantity) {
+    public void addItemWithQuantity(int itemId, int quantity) throws ItemNotFoundException {
         ItemDTO itemDTO = this.itemDAO.fetchItemById(itemId);
         if (itemDTO != null) {
             Item item = new Item(itemDTO);
@@ -105,10 +102,10 @@ public class Sale {
      * Registers a payment and ends the sale
      * @param amountPaid The amount paid
      */
-    public void registerPayment(int amountPaid) {
+    public void registerPayment(int amountPaid) throws ItemNotFoundException {
+        decreaseItemQuantitiesViaDAO();
         payment = new Payment(this.totalPrice, amountPaid);
         saleDAO.recordSale(getSaleState());
-        decreaseItemQuantitiesViaDAO();
     }
 
     private void addItemInternal(Item item, int quantity) {
@@ -128,7 +125,7 @@ public class Sale {
         this.totalVat = discount.totalAfterDiscount(this.totalVat);
     }
 
-    private void decreaseItemQuantitiesViaDAO() {
+    private void decreaseItemQuantitiesViaDAO() throws ItemNotFoundException {
         for (Map.Entry<Item, Integer> itemAndQuantity : itemsAndQuantities.entrySet()) {
             Item item = itemAndQuantity.getKey();
             int quantity = itemAndQuantity.getValue();

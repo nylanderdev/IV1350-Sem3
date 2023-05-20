@@ -15,5 +15,8 @@ public class MockSaleDAO implements SaleDAO {
      */
     @Override
     public void recordSale(SaleDTO saleDTO) {
+        if (saleDTO.TOTAL_PRICE < 0) {
+            throw new DatabaseFailureException();
+        }
     }
 }
