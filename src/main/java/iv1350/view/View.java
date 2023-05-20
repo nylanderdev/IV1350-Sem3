@@ -6,6 +6,7 @@ import iv1350.dto.ItemDTO;
 import iv1350.dto.SaleDTO;
 import iv1350.integration.ItemNotFoundException;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -15,6 +16,8 @@ import java.util.*;
 public class View {
     private SaleDTO lastSaleState;
     private Controller controller;
+    private TotalRevenueView revenueView;
+    private TotalRevenueFileOutput revenueFileOutput;
 
     /**
      * Starts the user interface and calls relevant system operations
@@ -22,6 +25,10 @@ public class View {
      * @param controller A controller object exposing system operations
      */
     public void run(Controller controller) {
+        revenueView = new TotalRevenueView(controller.getRevenueObservable());
+        try {
+            revenueFileOutput = new TotalRevenueFileOutput("./revenue.log", controller.getRevenueObservable());
+        } catch (IOException ignored) {}
         this.controller = controller;
         final int VALID_ITEM1 = 1;
         final int VALID_ITEM2 = 2;

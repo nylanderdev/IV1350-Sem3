@@ -1,7 +1,9 @@
 package iv1350.controller;
 
+import iv1350.Observer;
 import iv1350.dto.SaleDTO;
 import iv1350.integration.ItemNotFoundException;
+import iv1350.model.Revenue;
 import iv1350.model.Sale;
 
 /**
@@ -9,6 +11,11 @@ import iv1350.model.Sale;
  */
 public class Controller {
     private Sale currentSale;
+    private Revenue totalRevenue;
+
+    public Controller() {
+        totalRevenue = new Revenue();
+    }
 
     /**
      * Starts a new sale process. Use at the beginning of each sale.
@@ -66,6 +73,15 @@ public class Controller {
      */
     public SaleDTO registerPaymentForSale(int cashPaid) throws ItemNotFoundException {
         currentSale.registerPayment(cashPaid);
+        totalRevenue.addSaleToRevenue(currentSale);
         return currentSale.getSaleState();
+    }
+
+    /**
+     * Returns an observable revenue object
+     *
+     */
+    public Observer<Integer> getRevenueObservable() {
+        return totalRevenue.getObservable();
     }
 }

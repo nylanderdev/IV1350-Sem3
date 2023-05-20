@@ -19,7 +19,7 @@ public class Main {
      */
     public static void main(String[] args) {
         boolean logToFile = true;
-        File errorLog = new File("./log.txt");
+        File errorLog = new File("./error.log");
         try {
             errorLog.createNewFile();
         } catch (IOException e) {
