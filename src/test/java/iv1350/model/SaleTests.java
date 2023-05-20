@@ -25,7 +25,7 @@ public class SaleTests {
     }
 
     @Test
-    void itemFinalizationDisallowsItemAdditionWhenEmpty() {
+    void itemFinalizationDisallowsItemAdditionWhenEmpty() throws ItemNotFoundException {
         Sale sale = new Sale();
         SaleDTO initialState = sale.getSaleState();
         sale.finalizeItemSelection();
@@ -35,7 +35,7 @@ public class SaleTests {
     }
 
     @Test
-    void itemFinalizationDisallowsItemAdditionWhenNonEmpty() {
+    void itemFinalizationDisallowsItemAdditionWhenNonEmpty() throws ItemNotFoundException{
         Sale sale = new Sale();
         sale.addItem(VALID_ITEM_ID);
         SaleDTO initialState = sale.getSaleState();
@@ -46,7 +46,7 @@ public class SaleTests {
     }
 
     @Test
-    void multipleDiscountsCanBeAppliedCorrectly() {
+    void multipleDiscountsCanBeAppliedCorrectly() throws ItemNotFoundException {
         Sale sale = new Sale();
         sale.addItem(VALID_ITEM_ID);
         sale.addItem(VALID_ITEM_ID);
@@ -61,7 +61,7 @@ public class SaleTests {
     }
 
     @Test
-    void overpaymentResultsInCorrectChange() {
+    void overpaymentResultsInCorrectChange() throws ItemNotFoundException {
         final int EXPECTED_CHANGE = 79;
         Sale sale = new Sale();
         sale.addItemWithQuantity(VALID_ITEM_ID, 3);

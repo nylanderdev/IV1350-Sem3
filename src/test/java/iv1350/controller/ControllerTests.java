@@ -33,7 +33,7 @@ public class ControllerTests {
     }
 
     @Test
-    void itemOrderIrrelevant() {
+    void itemOrderIrrelevant() throws ItemNotFoundException {
         final int VALID_ITEM1 = 1;
         final int VALID_ITEM2 = 2;
         Controller controller1 = new Controller();
