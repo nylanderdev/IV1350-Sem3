@@ -44,7 +44,6 @@ public class View {
         } catch (ItemNotFoundException e) {
             System.out.println("Error: The payment could not be made, " +
                     "because one or more items in the sale could not be found");
-            e.printStackTrace(System.err);
             return;
         }
         System.out.printf("Give the customer %d¤ in change\n\n", lastSaleState.PAYMENT.AMOUNT_OF_CHANGE);
@@ -90,7 +89,6 @@ public class View {
 
     private void handleItemNotFound(ItemNotFoundException e) {
         System.out.printf("Error: %s\n\n", e.getMessage());
-        e.printStackTrace(System.err);
     }
 
     private void renderItemAdded(SaleDTO newSaleState) {
