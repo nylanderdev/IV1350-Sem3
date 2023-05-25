@@ -59,6 +59,7 @@ public class Sale {
 
     /**
      * Adds a singular copy of the item of the corresponding itemId to the sale
+     * @throws ItemNotFoundException If no item with the given itemId can be found
      * @param itemId The id of an item to add
      */
     public void addItem(int itemId) throws ItemNotFoundException {
@@ -67,6 +68,7 @@ public class Sale {
 
     /**
      * Adds multiple copies of the item of the corresponding itemId to the sale
+     * @throws ItemNotFoundException If no item with the given itemId can be found
      * @param itemId The id of an item to add
      */
     public void addItemWithQuantity(int itemId, int quantity) throws ItemNotFoundException {
@@ -100,6 +102,7 @@ public class Sale {
 
     /**
      * Registers a payment and ends the sale
+     * @throws ItemNotFoundException If an item in the sale cannot be found in the inventory system
      * @param amountPaid The amount paid
      */
     public void registerPayment(int amountPaid) throws ItemNotFoundException {

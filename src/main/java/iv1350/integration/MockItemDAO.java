@@ -24,6 +24,7 @@ public class MockItemDAO implements ItemDAO {
      * 2 -> Muesli
      *
      * @param itemId An id of the item to fetch
+     * @throws ItemNotFoundException If no item with the given itemId can be found
      * @return A filled out ItemDTO, or null if no item exists
      */
     @Override
@@ -45,6 +46,7 @@ public class MockItemDAO implements ItemDAO {
      * In this mock example, this is a no-op
      *
      * @param itemId The id of the item whose quantity is to be decreased
+     * @throws ItemNotFoundException If no item with the given itemId can be found
      * @param quantityChange The amount by which the quantity will be decreased
      */
     @Override

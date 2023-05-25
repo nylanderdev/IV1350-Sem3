@@ -4,6 +4,7 @@ import iv1350.controller.Controller;
 import iv1350.dto.DiscountDTO;
 import iv1350.dto.ItemDTO;
 import iv1350.dto.SaleDTO;
+import iv1350.integration.DatabaseFailureException;
 import iv1350.integration.ItemNotFoundException;
 
 import java.io.IOException;
@@ -25,23 +26,31 @@ public class View {
      * @param controller A controller object exposing system operations
      */
     public void run(Controller controller) {
-        revenueView = new TotalRevenueView(controller.getRevenueObservable());
         try {
-            revenueFileOutput = new TotalRevenueFileOutput("./revenue.log", controller.getRevenueObservable());
-        } catch (IOException ignored) {}
-        this.controller = controller;
-        final int VALID_ITEM1 = 1;
-        final int VALID_ITEM2 = 2;
-        final int INVALID_ITEM = 3;
-        lastSaleState = controller.startNewSale();
-        addItem(VALID_ITEM1);
-        addItem(VALID_ITEM2, 3);
-        addItem(INVALID_ITEM);
-        addItem(VALID_ITEM1);
-        endSale();
-        requestDiscount();
-        registerPayment();
-        renderReceipt(lastSaleState);
+            revenueView = new TotalRevenueView(controller.getRevenueObservable());
+            try {
+                revenueFileOutput = new TotalRevenueFileOutput("./revenue.log", controller.getRevenueObservable());
+            } catch (IOException ignored) {
+            }
+            this.controller = controller;
+            final int VALID_ITEM1 = 1;
+            final int VALID_ITEM2 = 2;
+            final int INVALID_ITEM = 3;
+            lastSaleState = controller.startNewSale();
+            addItem(VALID_ITEM1);
+            addItem(VALID_ITEM2, 3);
+            addItem(INVALID_ITEM);
+            addItem(VALID_ITEM1);
+            addItem(DatabaseFailureException.DATABASE_FAILURE_TRIGGER_ID);
+            endSale();
+            requestDiscount();
+            registerPayment();
+            renderReceipt(lastSaleState);
+        } catch (DatabaseFailureException critical) {
+            System.out.println("A critical error has occurred and the program must terminate.\n" +
+                    "Please contact your system administrator.");
+            throw critical;
+        }
     }
 
     private void registerPayment() {
@@ -51,6 +60,7 @@ public class View {
         } catch (ItemNotFoundException e) {
             System.out.println("Error: The payment could not be made, " +
                     "because one or more items in the sale could not be found");
+            e.printStackTrace(System.err);
             return;
         }
         System.out.printf("Give the customer %d¤ in change\n\n", lastSaleState.PAYMENT.AMOUNT_OF_CHANGE);
@@ -95,7 +105,8 @@ public class View {
     }
 
     private void handleItemNotFound(ItemNotFoundException e) {
-        System.out.printf("Error: %s\n\n", e.getMessage());
+        System.out.printf("Error: Could not find an item with id %d\n\n", e.getItemId());
+        e.printStackTrace(System.err);
     }
 
     private void renderItemAdded(SaleDTO newSaleState) {

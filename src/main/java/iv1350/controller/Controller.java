@@ -29,6 +29,7 @@ public class Controller {
     /**
      * Adds an item with the given id to the ongoing sale
      * @param itemId An item to an id
+     * @throws ItemNotFoundException If no item with the given itemId can be found
      * @return The state of the current sale in the form of a SaleDTO
      */
     public SaleDTO addItemToSale(int itemId) throws ItemNotFoundException {
@@ -40,6 +41,7 @@ public class Controller {
      * Adds multiple copies of the same item (given id) to the ongoing sale
      * @param itemId The id of the kind of item to add
      * @param quantity The number of items to add
+     * @throws ItemNotFoundException If no item with the given itemId can be found
      * @return The state of the current sale in the form of a SaleDTO
      */
     public SaleDTO addItemToSaleWithQuantity(int itemId, int quantity) throws ItemNotFoundException {
@@ -69,6 +71,7 @@ public class Controller {
     /**
      * Registers a cash payment and ends the sale
      * @param cashPaid The amount paid
+     * @throws ItemNotFoundException If an item in the sale cannot be found in the inventory system
      * @return The final state of the sale in the form of a SaleDTO
      */
     public SaleDTO registerPaymentForSale(int cashPaid) throws ItemNotFoundException {
